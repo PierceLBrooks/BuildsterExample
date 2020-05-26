@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildster directory="../build">
+	<project directory="../project">
+		<message><data id="BUILDSTER_OS"></data></message>
+		<dependencies>
+			<if_check id="REPO" check="enabled">
+				<if id="REPO_BRANCH">
+					<if id="REPO_URL">
+						<if id="REPO_USERNAME">
+							<if id="REPO_PASSWORD">
+								<dependency>
+									<label>RemoteDependencyTest</label>
+									<subpath>build</subpath>
+									<remote>
+										<url><data id="REPO_URL"></data></url>
+										<git_repo>
+											<branch><data id="REPO_BRANCH"></data></branch>
+											<credentials>
+												<username><data id="REPO_USERNAME"></data></username>
+												<password><data id="REPO_PASSWORD"></data></password>
+											</credentials>
+										</git_repo>
+									</remote>
+									<build>
+										<arguments>
+											<!--<argument>-DCMAKE_ANDROID_NDK=~/Library/Android/sdk/ndk-bundle</argument>-->
+											<!--<argument>-DCMAKE_SYSTEM_NAME=<data id="BUILDSTER_OS"></data></argument>-->
+										</arguments>
+										<cmake>
+											<generator>
+												<switch id="BUILDSTER_OS">
+													<case check="Windows">MinGW Makefiles</case>
+													<case check="Linux">Unix Makefiles</case>
+													<case check="Darwin">Unix Makefiles</case>
+													<default><quit></quit></default>
+												</switch>
+											</generator>
+											<source>..</source>
+										</cmake>
+									</build>
+									<exports>
+										<export type="headers">
+											<key>SFML_INCLUDE_PATH</key>
+											<value><install></install>/include</value>
+										</export>
+										<export type="libraries">
+											<key>SFML_LIBRARIES</key>
+											<value><install></install>/lib</value>
+										</export>
+									</exports>
+									<imports></imports>
+								</dependency>
+							</if>
+						</if>
+					</if>	
+				</if>
+				<else>
+					<message><data id="REPO"></data></message>
+					<quit></quit>
+				</else>
+			</if_check>
+			<dependency>
+				<label>LocalDependencyTest</label>
+				<subpath>build</subpath>
+				<local>
+					<path><data id="BUILDSTER_WD"></data>/../libuv</path>
+				</local>
+				<build>
+					<arguments></arguments>
+					<cmake>
+						<generator>
+							<switch id="BUILDSTER_OS">
+								<case check="Windows">MinGW Makefiles</case>
+								<case check="Linux">Unix Makefiles</case>
+								<case check="Darwin">Unix Makefiles</case>
+								<default><quit></quit></default>
+							</switch>
+						</generator>
+						<source>..</source>
+					</cmake>
+				</build>
+				<exports>
+					<export type="headers">
+						<key>UV_INCLUDE_PATH</key>
+						<value><install></install>/include</value>
+					</export>
+					<export type="libraries">
+						<key>UV_LIBRARIES</key>
+						<value><install></install>/lib</value>
+					</export>
+				</exports>
+				<imports></imports>
+			</dependency>
+		</dependencies>
+		<targets>
+			<target type="library">
+				<label>LibraryTargetTest</label>
+				<definitions></definitions>
+				<links></links>
+				<exports>
+					<export type="headers">
+						<key>BUILDSTER_INCLUDE_PATH</key>
+						<value><install></install>/include</value>
+					</export>
+					<export type="libraries">
+						<key>BUILDSTER_LIBRARIES</key>
+						<value><install></install>/lib</value>
+					</export>
+				</exports>
+				<imports></imports>
+			</target>
+			<target type="executable">
+				<label>ExecutableTargetTest</label>
+				<definitions>
+					<definition>
+						<key>VERSION</key>
+						<value>"VERSION_NAME=\"<data id="VERSION_NAME"></data>\"_CODE=\"<data id="VERSION_CODE"></data>\""</value>
+					</definition>
+				</definitions>
+				<links>
+					<!--
+					-lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
+					-->
+					<link>sfml-graphics</link>
+					<link>sfml-window</link>
+					<link>sfml-audio</link>
+					<link>sfml-network</link>
+					<link>sfml-system</link>
+					<link>LibraryTargetTest</link>
+				</links>
+				<imports>
+					<import>LibraryTargetTest</import>
+					<import>RemoteDependencyTest</import>
+					<import>LocalDependencyTest</import>
+				</imports>
+			</target>
+		</targets>
+	</project>
+</buildster>

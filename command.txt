@@ -1,0 +1,2 @@
+python ./Buildster/buildster.py ./test.xml REPO=enabled REPO_URL=https://github.com/SFML/SFML.git REPO_USERNAME=guest REPO_PASSWORD=password REPO_BRANCH=master VERSION_NAME=PANDA VERSION_CODE=2.0
+
